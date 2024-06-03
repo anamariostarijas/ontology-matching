@@ -102,30 +102,63 @@ class MatchingTechnique:
                     matches[uri1] = [uri2, confidence]
         return matches
     
-    def get_children(graph, entity):
+    def get_children(self, graph: Graph, entity: rdflib.term.URIRef) -> list:
+        """Retrieves children of a class in a graph.
+
+        Args:
+            graph (Graph): ontology graph
+            entity (rdflib.term.URIRef): en entity of an ontology
+
+        Returns:
+            list: list of children
+        """
         returnlist = [s for s,v,o in graph.triples((None, RDFS.subClassOf, entity))]
         return returnlist
 
-    def extract_class_children(graph):
+    def extract_class_children(self, graph: Graph) -> dict:
+        """Returns a dictionary, where keys are entities and their values are their children.
+
+        Args:
+            graph (Graph): ontology graph
+
+        Returns:
+            dict: {uri: uris of children}
+        """
         hierarchy = {}
         for s, p, o in graph:
             if p == RDF.type and o == OWL.Class:
-                hier = get_children(graph, s)
+                hier = self.get_children(graph, s)
                 hierarchy[s] = hier
             elif p == rdflib.RDFS.label or p == rdflib.namespace.SKOS.prefLabel:
                 hierarchy[s] = []
         return hierarchy
 
-    def extract_class_parents(children_dict):
+    def extract_class_parents(self, children_dict: dict) -> dict:
+        """Transforms a dictionary of children into a dictionary of parents.
+
+        Args:
+            children_dict (dict): dictionary of children retrieved from method extract_class_children
+
+        Returns:
+            dict: {uri: uri of the parent}
+        """
         hierarchy = {}
         for k, v in children_dict.items():
             for child in v:
                 hierarchy[child] = k
         return hierarchy
 
-    def complete_hierarchy(graph):
-        first_level_hier = extract_class_children(graph)
-        parents = extract_class_parents(first_level_hier)
+    def find_paths(self, graph: Graph) -> dict:
+        """Returns the paths of class hierarchy, starting with the root and going until the entity.
+
+        Args:
+            graph (Graph): ontology graph
+
+        Returns:
+            dict: {uri: <root name>:<child of root>:...:<parent of entity>:<entity>}
+        """
+        first_level_hier = self.extract_class_children(graph)
+        parents = self.extract_class_parents(first_level_hier)
         complete = {}
         for s, p, o in graph:
             if p == RDF.type and o == OWL.Class:
@@ -143,7 +176,20 @@ class MatchingTechnique:
                 complete[s] = s.replace("#", "/").split("/")[-1]
         return complete
 
-    def path_distance(ss, tt, n, m, l=0.7):
+    def path_distance(self, ss: list, tt: list, l: float = 0.7) -> float:
+        """Calculates path distance between string sequences ss and tt with lambda l.
+        The formula uses levenshtein distance as a base distance.
+
+        Args:
+            ss (list): first string sequence
+            tt (list): second string sequence
+            l (float, optional): _description_. Defaults to 0.7.
+
+        Returns:
+            float: _description_
+        """
+        n = len(ss)
+        m = len(tt)
         if n == 0 or m == 0:
             k = m if n == 0 else n
             #print(f"k = {k}")
@@ -154,4 +200,4 @@ class MatchingTechnique:
             #print(f"left_label = {left_label}, right_label = {right_label}, n={n}, m = {m}")
             match, score = process.extractOne(left_label, [right_label], scorer=fuzz.token_sort_ratio)
             #print("distance: " + str(1 - score/100))
-            return ((l * (1 - score/100)) + (1 - l) * path_distance(ss[:n-1], tt[:m-1], n-1, m-1, l))
+            return ((l * (1 - score/100)) + (1 - l) * self.path_distance(ss[:n-1], tt[:m-1], l))
