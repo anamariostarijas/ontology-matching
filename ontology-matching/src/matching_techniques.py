@@ -7,7 +7,7 @@ import nltk
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from src.helpers import Calculator
+from src.helpers import Calculator, Processor
 
 class MatchingTechnique:
     """Uses different simple ontology matching techniques and produces matchen between entities from left and right ontology.
@@ -85,3 +85,16 @@ class MatchingTechnique:
                 if confidence >= threshold:
                     matches[uri1] = [uri2, confidence]
         return matches
+    
+    def match_with_path(self, left_graph: Graph, right_graph: Graph, threshold: float = 0.9, l: float = 0.7) -> dict:
+        # find all paths
+        left_paths = Processor.find_paths(left_graph)
+        right_paths = Processor.find_paths(right_graph)
+        matches = {}
+        for left_uri, left_label in left_paths.items():
+            for right_uri, right_label in right_paths.items():
+                similarity = 1 - Calculator.path_distance(left_label, right_label, l)
+                if similarity >= threshold:
+                    matches[left_uri] = [right_uri, similarity]
+        return matches
+        

@@ -34,10 +34,10 @@ class Calculator:
         Args:
             ss (list): first string sequence
             tt (list): second string sequence
-            l (float, optional): _description_. Defaults to 0.7.
+            l (float, optional): Lambda factor. Defaults to 0.7.
 
         Returns:
-            float: _description_
+            float: path distance
         """
         n = len(ss)
         m = len(tt)
@@ -101,17 +101,16 @@ class Processor:
         parents = self.extract_class_parents(graph)
         complete = {}
         for s, p, o in graph:
-            if p == RDF.type and o == OWL.Class:
+            if o == OWL.Class:
                 parent_id = parents[s] if s in parents else ""
-                parent = parents[s].replace("#", "/").split("/")[-1] if s in parents else ""
-                #print(f"{s} has parent {parent}")
-                path = parent
+                parent = parents[s].replace("#", "/").split("/")[-1] if s in parents else None
+                path = []
                 while parent != "":
+                    path = [parent] + path
                     parent = parents[parent_id].replace("#", "/").split("/")[-1] if parent_id in parents else ""
                     parent_id = parents[parent_id] if parent_id in parents else ""
-                    path = str(parent) + ":" + path
                     #print(f"----which has parent {parent}")
-                complete[s] = path + ":" + s.replace("#", "/").split("/")[-1]
-            #elif p == rdflib.RDFS.label or p == rdflib.namespace.SKOS.prefLabel:
-            #    complete[s] = s.replace("#", "/").split("/")[-1]
+                complete[s] = path + [s.replace("#", "/").split("/")[-1]]
+            elif s not in complete and (p == rdflib.RDFS.label or p == rdflib.namespace.SKOS.prefLabel):
+                complete[s] = [s.replace("#", "/").split("/")[-1]]
         return complete
