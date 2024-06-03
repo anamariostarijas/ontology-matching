@@ -53,55 +53,40 @@ class Calculator:
             #print("distance: " + str(1 - score/100))
             return ((l * (1 - score/100)) + (1 - l) * self.path_distance(ss[:n-1], tt[:m-1], l))
         
+
 class Processor:
 
     def __init__(self) -> None:
         pass
 
-    def get_children(self, graph: Graph, entity: rdflib.term.URIRef) -> list:
+    def get_parent(self, graph: Graph, entity: str) -> list:
         """Retrieves children of a class in a graph.
 
         Args:
             graph (Graph): ontology graph
-            entity (rdflib.term.URIRef): en entity of an ontology
+            entity (str): uri of the entity of an ontology
 
         Returns:
             list: list of children
         """
-        returnlist = [s for s,v,o in graph.triples((None, RDFS.subClassOf, entity))]
-        return returnlist
+        parents = [o for s,v,o in graph.triples((rdflib.term.URIRef(entity), RDFS.subClassOf, None)) if ("#" in o or "/" in o)]
+        parent = parents[0] if len(parents) != 0 else ""
+        return parent
 
-    def extract_class_children(self, graph: Graph) -> dict:
-        """Returns a dictionary, where keys are entities and their values are their children.
-
-        Args:
-            graph (Graph): ontology graph
-
-        Returns:
-            dict: {uri: uris of children}
-        """
-        hierarchy = {}
-        for s, p, o in graph:
-            if p == RDF.type and o == OWL.Class:
-                hier = self.get_children(graph, s)
-                hierarchy[s] = hier
-            elif p == rdflib.RDFS.label or p == rdflib.namespace.SKOS.prefLabel:
-                hierarchy[s] = []
-        return hierarchy
-
-    def extract_class_parents(self, children_dict: dict) -> dict:
+    def extract_class_parents(self, graph):
         """Transforms a dictionary of children into a dictionary of parents.
 
         Args:
-            children_dict (dict): dictionary of children retrieved from method extract_class_children
+            graph (Graph): ontology graph
 
         Returns:
             dict: {uri: uri of the parent}
         """
         hierarchy = {}
-        for k, v in children_dict.items():
-            for child in v:
-                hierarchy[child] = k
+        for s, p, o in graph:
+            if o == OWL.Class:
+                hier = self.get_parent(graph, s)
+                hierarchy[s] = hier
         return hierarchy
 
     def find_paths(self, graph: Graph) -> dict:
@@ -113,21 +98,20 @@ class Processor:
         Returns:
             dict: {uri: <root name>:<child of root>:...:<parent of entity>:<entity>}
         """
-        first_level_hier = self.extract_class_children(graph)
-        parents = self.extract_class_parents(first_level_hier)
+        parents = self.extract_class_parents(graph)
         complete = {}
         for s, p, o in graph:
             if p == RDF.type and o == OWL.Class:
                 parent_id = parents[s] if s in parents else ""
                 parent = parents[s].replace("#", "/").split("/")[-1] if s in parents else ""
                 #print(f"{s} has parent {parent}")
-                path = str(parent)
+                path = parent
                 while parent != "":
                     parent = parents[parent_id].replace("#", "/").split("/")[-1] if parent_id in parents else ""
                     parent_id = parents[parent_id] if parent_id in parents else ""
                     path = str(parent) + ":" + path
                     #print(f"----which has parent {parent}")
                 complete[s] = path + ":" + s.replace("#", "/").split("/")[-1]
-            elif p == rdflib.RDFS.label or p == rdflib.namespace.SKOS.prefLabel:
-                complete[s] = s.replace("#", "/").split("/")[-1]
+            #elif p == rdflib.RDFS.label or p == rdflib.namespace.SKOS.prefLabel:
+            #    complete[s] = s.replace("#", "/").split("/")[-1]
         return complete
