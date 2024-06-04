@@ -6,7 +6,7 @@
   <owl:Ontology rdf:about="">
     <dc:creator>Nick Knouf &lt;nknouf@mit.edu&gt;</dc:creator>
     <dc:contributor>Antoine Zimmermann &lt;antoine.zimmermann@inrialpes.fr&gt;</dc:contributor>
-    <dc:contributor>Jérôme Euzenat</dc:contributor>
+    <dc:contributor>Jï¿½rï¿½me Euzenat</dc:contributor>
     <dc:description>Bibliographic references in OWL</dc:description>
     <dc:date>08/06/2005</dc:date>
     <rdfs:label xmlns:my="http://oaei.ontologymatching.org/tests/205/onto.rdf#" xmlns:units="http://visus.mit.edu/fontomri/0.01/units.owl#" xmlns:wot="http://xmlns.com/wot/0.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:align="http://knowledgeweb.semanticweb.org/heterogeneity/alignment" xmlns:dctype="http://purl.org/dc/dcmitype/">Bibliographic references</rdfs:label>
@@ -1239,7 +1239,7 @@
     <rdfs:comment xml:lang="en">The number of a journal, magazine, technical report, or of a work in a series. An issue of a journal or magazine is usually identified by its volume and number; the organization that issues a technical report usually gives it a number; and sometimes books are given numbers in a named series.</rdfs:comment>
   </owl:DatatypeProperty>
 
-  <owl:DatatypeProperty rdf:ID="issue">
+  <owl:DatatypeProperty rdf:ID="issueConference">
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -1330,16 +1330,16 @@
 </foaf:Person>
 
 <foaf:Person rdf:about="#a85228505">
-	<rdfs:label xmlns:my="http://oaei.ontologymatching.org/tests/205/onto.rdf#" xmlns:units="http://visus.mit.edu/fontomri/0.01/units.owl#" xmlns:wot="http://xmlns.com/wot/0.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:align="http://knowledgeweb.semanticweb.org/heterogeneity/alignment" xmlns:dctype="http://purl.org/dc/dcmitype/">Alexander Mädche</rdfs:label>
-	<foaf:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alexander Mädche</foaf:name>
+	<rdfs:label xmlns:my="http://oaei.ontologymatching.org/tests/205/onto.rdf#" xmlns:units="http://visus.mit.edu/fontomri/0.01/units.owl#" xmlns:wot="http://xmlns.com/wot/0.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:align="http://knowledgeweb.semanticweb.org/heterogeneity/alignment" xmlns:dctype="http://purl.org/dc/dcmitype/">Alexander Mï¿½dche</rdfs:label>
+	<foaf:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alexander Mï¿½dche</foaf:name>
 	<foaf:firstName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alexander</foaf:firstName>
-	<lastName xmlns="" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mädche</lastName>
+	<lastName xmlns="" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mï¿½dche</lastName>
 </foaf:Person>
 
 <foaf:Person rdf:about="#a48552212">
-	<rdfs:label xmlns:my="http://oaei.ontologymatching.org/tests/205/onto.rdf#" xmlns:units="http://visus.mit.edu/fontomri/0.01/units.owl#" xmlns:wot="http://xmlns.com/wot/0.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:align="http://knowledgeweb.semanticweb.org/heterogeneity/alignment" xmlns:dctype="http://purl.org/dc/dcmitype/">Björn Schnizler</rdfs:label>
-	<foaf:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Björn Schnizler</foaf:name>
-	<foaf:firstName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Björn</foaf:firstName>
+	<rdfs:label xmlns:my="http://oaei.ontologymatching.org/tests/205/onto.rdf#" xmlns:units="http://visus.mit.edu/fontomri/0.01/units.owl#" xmlns:wot="http://xmlns.com/wot/0.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:align="http://knowledgeweb.semanticweb.org/heterogeneity/alignment" xmlns:dctype="http://purl.org/dc/dcmitype/">Bjï¿½rn Schnizler</rdfs:label>
+	<foaf:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bjï¿½rn Schnizler</foaf:name>
+	<foaf:firstName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bjï¿½rn</foaf:firstName>
 	<lastName xmlns="" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Schnizler</lastName>
 </foaf:Person>
 
@@ -1449,10 +1449,10 @@
 </foaf:Person>
 
 <foaf:Person rdf:about="#a98078619">
-	<rdfs:label xmlns:my="http://oaei.ontologymatching.org/tests/205/onto.rdf#" xmlns:units="http://visus.mit.edu/fontomri/0.01/units.owl#" xmlns:wot="http://xmlns.com/wot/0.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:align="http://knowledgeweb.semanticweb.org/heterogeneity/alignment" xmlns:dctype="http://purl.org/dc/dcmitype/">Philippe Cudré-Mauroux</rdfs:label>
-	<foaf:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Philippe Cudré-Mauroux</foaf:name>
+	<rdfs:label xmlns:my="http://oaei.ontologymatching.org/tests/205/onto.rdf#" xmlns:units="http://visus.mit.edu/fontomri/0.01/units.owl#" xmlns:wot="http://xmlns.com/wot/0.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:align="http://knowledgeweb.semanticweb.org/heterogeneity/alignment" xmlns:dctype="http://purl.org/dc/dcmitype/">Philippe Cudrï¿½-Mauroux</rdfs:label>
+	<foaf:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Philippe Cudrï¿½-Mauroux</foaf:name>
 	<foaf:firstName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Philippe</foaf:firstName>
-	<lastName xmlns="" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cudré-Mauroux</lastName>
+	<lastName xmlns="" rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cudrï¿½-Mauroux</lastName>
 </foaf:Person>
 
 <foaf:Person rdf:about="#a39510672">

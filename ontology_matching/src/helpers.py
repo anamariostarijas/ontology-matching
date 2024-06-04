@@ -9,8 +9,9 @@ class Calculator:
 
     def __init__(self) -> None:
         pass
-
-    def ngram_similarity(self, str1: str, str2: str, n: int = 3) -> float:
+    
+    @staticmethod
+    def ngram_similarity(str1: str, str2: str, n: int = 3) -> float:
         """Calculates n-gram similarity between str1 and str2 for given n.
 
         Args:
@@ -27,7 +28,8 @@ class Calculator:
         denom = min(len(str1), len(str2)) - n + 1
         return len(intersection) / denom
     
-    def path_distance(self, ss: list, tt: list, l: float = 0.7) -> float:
+    @staticmethod
+    def path_distance(ss: list, tt: list, l: float = 0.7) -> float:
         """Calculates path distance between string sequences ss and tt with lambda l.
         The formula uses levenshtein distance as a base distance.
 
@@ -48,15 +50,16 @@ class Calculator:
             left_label = ss[n-1]
             right_label = tt[m-1]
             match, score = process.extractOne(left_label, [right_label], scorer=fuzz.token_sort_ratio)
-            return ((l * (1 - score/100)) + (1 - l) * self.path_distance(ss[:n-1], tt[:m-1], l))
+            return ((l * (1 - score/100)) + (1 - l) * Calculator.path_distance(ss[:n-1], tt[:m-1], l))
         
 
 class Processor:
 
     def __init__(self) -> None:
         pass
-
-    def get_parent(self, graph: Graph, entity: str) -> list:
+    
+    @staticmethod
+    def get_parent(graph: Graph, entity: str) -> list:
         """Retrieves children of a class in a graph.
 
         Args:
@@ -70,7 +73,8 @@ class Processor:
         parent = parents[0] if len(parents) != 0 else ""
         return parent
 
-    def extract_class_parents(self, graph):
+    @staticmethod
+    def extract_class_parents(graph):
         """Transforms a dictionary of children into a dictionary of parents.
 
         Args:
@@ -82,11 +86,12 @@ class Processor:
         hierarchy = {}
         for s, p, o in graph:
             if o == OWL.Class:
-                hier = self.get_parent(graph, s)
+                hier = Processor.get_parent(graph, s)
                 hierarchy[s] = hier
         return hierarchy
 
-    def find_paths(self, graph: Graph) -> dict:
+    @staticmethod
+    def find_paths(graph: Graph) -> dict:
         """Returns the paths of class hierarchy, starting with the root and going until the entity.
 
         Args:
@@ -95,7 +100,7 @@ class Processor:
         Returns:
             dict: {uri: <root name>:<child of root>:...:<parent of entity>:<entity>}
         """
-        parents = self.extract_class_parents(graph)
+        parents = Processor.extract_class_parents(graph)
         complete = {}
         for s, p, o in graph:
             if o == OWL.Class:

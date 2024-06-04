@@ -8,7 +8,7 @@ from nltk.util import ngrams
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from src.matching_techniques import MatchingTechnique
+from ontology_matching.src.matching_techniques import MatchingTechnique
 
 class OntologyMatcher:
     """Uses different simple ontology matching techniques and produces an alignment between the two input ontologies.
@@ -35,7 +35,7 @@ class OntologyMatcher:
         texts = {}
         uris = set()
         for s, p, o in graph:
-            if p == rdflib.RDFS.label or p == rdflib.namespace.SKOS.prefLabel:
+            if o == rdflib.OWL.ObjectProperty:
                 if s not in texts:
                     texts[s] = {"label": "", "comment": ""}
                     uris.add(s)
@@ -45,7 +45,7 @@ class OntologyMatcher:
                     texts[s] = {"label": "", "comment": ""}
                     uris.add(s)
                 texts[s]["comment"] += " " + str(o)
-            elif p == rdflib.RDF.type and o == rdflib.OWL.Class:
+            elif o == rdflib.OWL.Class:
                 if s not in texts:
                     texts[s] = {"label": "", "comment": ""}
                     uris.add(s)
@@ -60,7 +60,7 @@ class OntologyMatcher:
         """Uses the technique specified and generates one-to-zero or one matches between entities from the ontologies, if the similarity score is greater than the threshold.
 
         Args:
-            technique (str): levenshtein, n-gram, cosine, path
+            technique (str): levenshtein, ngram, cosine, path
             threshold (float): the minimum level of similarity
 
         Returns:
@@ -69,24 +69,24 @@ class OntologyMatcher:
         """
         # Extract labels
         graphs = self.import_ontologies()
-        left_g = graphs.values()[0]
-        right_g = graphs.values()[1]
+        left_g = graphs[self.left_ontology.split(".")[0]]
+        right_g = graphs[self.right_ontology.split(".")[0]]
         left_info = self.extract_labels(left_g, include_comments)
         right_info = self.extract_labels(right_g, include_comments)
         # generate matches based on the technique
         if technique == "levenshtein":
-            matches = MatchingTechnique.match_with_levenshtein(left_info, right_info, threshold)
-        elif technique == "n-gram":
+            matches = MatchingTechnique.match_with_levenshtein(left_info, right_info, threshold*100)
+        elif technique == "ngram":
             matches = MatchingTechnique.match_with_n_gram(left_info, right_info, threshold)
         elif technique == "cosine":
             matches = MatchingTechnique.match_with_cosine(left_info, right_info, threshold)
         elif technique == "path":
             matches = MatchingTechnique.match_with_path(left_g, right_g, threshold, l)
         else:
-            raise ValueError(f"technique must be one of these: levenshtein, n-gram, cosine, path!")
+            raise ValueError(f"technique must be one of these: levenshtein, ngram, cosine, path!")
         # Print matches
-        for match in matches:
-            print(f"Match: {match[0]} <-> {match[1]} with score {match[2]}")
+        for match_l, match_r in matches.items():
+            print(f"Match: {match_l} <-> {match_r[0]} with score {match_r[1]}")
         return matches
     
     def add_correspondence(self, alignment_graph, entity1, entity2, confidence, ALIGN):
