@@ -8,6 +8,8 @@ from nltk.util import ngrams
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from src.matching_techniques import MatchingTechnique
+
 class OntologyMatcher:
     """Uses different simple ontology matching techniques and produces an alignment between the two input ontologies.
     """
@@ -54,11 +56,11 @@ class OntologyMatcher:
             info = {s: e["label"] for s, e in texts.items()}
         return info
     
-    def match_ontologies(self, technique: str, threshold: float) -> dict:
-        """Uses the technique specified and generates one-to-one matches between entities from the ontologies.
+    def match_ontologies(self, technique: str, threshold: float, include_comments: bool = False, l: float = 0.7) -> dict:
+        """Uses the technique specified and generates one-to-zero or one matches between entities from the ontologies, if the similarity score is greater than the threshold.
 
         Args:
-            technique (str): Levenshtein, n-gram, cosine, path
+            technique (str): levenshtein, n-gram, cosine, path
             threshold (float): the minimum level of similarity
 
         Returns:
@@ -67,16 +69,35 @@ class OntologyMatcher:
         """
         # Extract labels
         graphs = self.import_ontologies()
-        g1 = graphs.values()[0]
-        g2 = graphs.values()[1]
-        info1 = self.extract_labels(g1)
-        info2 = self.extract_labels(g2)
-        matches = match_labels(left_labels, right_labels)
+        left_g = graphs.values()[0]
+        right_g = graphs.values()[1]
+        left_info = self.extract_labels(left_g, include_comments)
+        right_info = self.extract_labels(right_g, include_comments)
+        # generate matches based on the technique
+        if technique == "levenshtein":
+            matches = MatchingTechnique.match_with_levenshtein(left_info, right_info, threshold)
+        elif technique == "n-gram":
+            matches = MatchingTechnique.match_with_n_gram(left_info, right_info, threshold)
+        elif technique == "cosine":
+            matches = MatchingTechnique.match_with_cosine(left_info, right_info, threshold)
+        elif technique == "path":
+            matches = MatchingTechnique.match_with_path(left_g, right_g, threshold, l)
+        else:
+            raise ValueError(f"technique must be one of these: levenshtein, n-gram, cosine, path!")
         # Print matches
         for match in matches:
             print(f"Match: {match[0]} <-> {match[1]} with score {match[2]}")
+        return matches
+    
+    def add_correspondence(self, alignment_graph, entity1, entity2, confidence, ALIGN):
+        correspondence = URIRef(f"http://example.org/alignment#{entity1.split('#')[-1]}_{entity2.split('#')[-1]}")
+        alignment_graph.add((correspondence, RDF.type, ALIGN.Correspondence))
+        alignment_graph.add((correspondence, ALIGN.entity1, URIRef(entity1)))
+        alignment_graph.add((correspondence, ALIGN.entity2, URIRef(entity2)))
+        alignment_graph.add((correspondence, ALIGN.confidence, Literal(confidence, datatype=XSD.float)))
 
-    def create_alignment_ontology(self, matches):
+
+    def create_alignment_ontology(self, matches: dict):
         # Create alignment ontology
         ALIGN = Namespace("http://example.org/alignment#")
 
@@ -88,19 +109,14 @@ class OntologyMatcher:
         alignment_graph.add((ALIGN.entity2, RDF.type, OWL.ObjectProperty))
         alignment_graph.add((ALIGN.confidence, RDF.type, OWL.DatatypeProperty))
         alignment_graph.add((ALIGN.confidence, RDFS.range, XSD.float))
-
-        def add_correspondence(alignment_graph, entity1, entity2, confidence):
-            correspondence = URIRef(f"http://example.org/alignment#{entity1.split('#')[-1]}_{entity2.split('#')[-1]}")
-            alignment_graph.add((correspondence, RDF.type, ALIGN.Correspondence))
-            alignment_graph.add((correspondence, ALIGN.entity1, URIRef(entity1)))
-            alignment_graph.add((correspondence, ALIGN.entity2, URIRef(entity2)))
-            alignment_graph.add((correspondence, ALIGN.confidence, Literal(confidence, datatype=XSD.float)))
-
-        for match in matches:
-            entity1 = f"http://example.org/left_ontology#{match[0]}"
-            entity2 = f"http://example.org/right_ontology#{match[1]}"
-            confidence = match[2] / 100  # Normalize confidence to [0, 1]
-            add_correspondence(alignment_graph, entity1, entity2, confidence)
+        for left_match, right_match in matches.items():
+            entity1 = f"http://oaei.ontologymatching.org/tests/101/onto.rdf#{left_match}"
+            entity2 = f"http://oaei.ontologymatching.org/tests/205/onto.rdf#{right_match[0]}"
+            confidence = right_match[1]
+            self.add_correspondence(alignment_graph, entity1, entity2, confidence, ALIGN)
 
         # Serialize the alignment ontology
         alignment_graph.serialize("alignment_ontology.owl", format="xml")
+
+    
+    

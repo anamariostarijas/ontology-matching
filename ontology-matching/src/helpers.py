@@ -43,14 +43,11 @@ class Calculator:
         m = len(tt)
         if n == 0 or m == 0:
             k = m if n == 0 else n
-            #print(f"k = {k}")
             return k
         else:
             left_label = ss[n-1]
             right_label = tt[m-1]
-            #print(f"left_label = {left_label}, right_label = {right_label}, n={n}, m = {m}")
             match, score = process.extractOne(left_label, [right_label], scorer=fuzz.token_sort_ratio)
-            #print("distance: " + str(1 - score/100))
             return ((l * (1 - score/100)) + (1 - l) * self.path_distance(ss[:n-1], tt[:m-1], l))
         
 
