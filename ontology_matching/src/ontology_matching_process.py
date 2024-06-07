@@ -89,34 +89,48 @@ class OntologyMatcher:
             print(f"Match: {match_l} <-> {match_r[0]} with score {match_r[1]}")
         return matches
     
-    def add_correspondence(self, alignment_graph, entity1, entity2, confidence, ALIGN):
-        correspondence = URIRef(f"http://example.org/alignment#{entity1.split('#')[-1]}_{entity2.split('#')[-1]}")
-        alignment_graph.add((correspondence, RDF.type, ALIGN.Correspondence))
+    def add_correspondence(self, alignment_graph: Graph, entity1: str, entity2: str, confidence: float, ALIGN: Namespace, name: str) -> None:
+        """Adds a correspondence of type alignmentCell to alignment_graph with specific confidence measure.
+
+        Args:
+            alignment_graph (Graph): rdf alignment graph to update
+            entity1 (str): left entity of the correspondence
+            entity2 (str): right entity of the correspondence
+            confidence (float): confidence measure score
+            ALIGN (Namespace): Namespace of the graph
+            name (str): name of the graph
+        """
+        correspondence = URIRef(f"http://example.org/{name}_alignment#{entity1.split('#')[-1]}_{entity2.split('#')[-1]}")
+        alignment_graph.add((correspondence, RDF.type, ALIGN.alignmentCell))
         alignment_graph.add((correspondence, ALIGN.entity1, URIRef(entity1)))
         alignment_graph.add((correspondence, ALIGN.entity2, URIRef(entity2)))
-        alignment_graph.add((correspondence, ALIGN.confidence, Literal(confidence, datatype=XSD.float)))
+        alignment_graph.add((correspondence, ALIGN.measure, Literal(confidence, datatype=XSD.float)))
 
 
-    def create_alignment_ontology(self, matches: dict):
+    def create_alignment_ontology(self, matches: dict, file_name: str) -> None:
+        """Generates an alignment rdf graph from the given matches and saves the graph under the name.
+
+        Args:
+            matches (dict): a dictionary of matches between the ontologies
+            file_name (str): file path where to save the file
+        """
         # Create alignment ontology
-        ALIGN = Namespace("http://example.org/alignment#")
-
+        ALIGN = Namespace(f"http://example.org/{file_name}_alignment#")
         alignment_graph = Graph()
         alignment_graph.bind("align", ALIGN)
-
-        alignment_graph.add((ALIGN.Correspondence, RDF.type, OWL.Class))
+        alignment_graph.add((ALIGN.alignmentCell, RDF.type, OWL.Class))
         alignment_graph.add((ALIGN.entity1, RDF.type, OWL.ObjectProperty))
         alignment_graph.add((ALIGN.entity2, RDF.type, OWL.ObjectProperty))
-        alignment_graph.add((ALIGN.confidence, RDF.type, OWL.DatatypeProperty))
-        alignment_graph.add((ALIGN.confidence, RDFS.range, XSD.float))
+        alignment_graph.add((ALIGN.measure, RDF.type, OWL.DatatypeProperty))
+        alignment_graph.add((ALIGN.measure, RDFS.range, XSD.float))
         for left_match, right_match in matches.items():
-            entity1 = f"http://oaei.ontologymatching.org/tests/101/onto.rdf#{left_match}"
-            entity2 = f"http://oaei.ontologymatching.org/tests/205/onto.rdf#{right_match[0]}"
+            entity1 = left_match
+            entity2 = right_match[0]
             confidence = right_match[1]
-            self.add_correspondence(alignment_graph, entity1, entity2, confidence, ALIGN)
+            self.add_correspondence(alignment_graph, entity1, entity2, confidence, ALIGN, file_name)
 
         # Serialize the alignment ontology
-        alignment_graph.serialize("alignment_ontology.owl", format="xml")
+        alignment_graph.serialize(f"{file_name}_alignment_ontology.rdf", format="xml")
 
     
     
