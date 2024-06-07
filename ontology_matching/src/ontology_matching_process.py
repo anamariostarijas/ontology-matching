@@ -3,10 +3,6 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 from rdflib import Graph, Namespace, URIRef, Literal
 from rdflib.namespace import RDF, RDFS, OWL, XSD
-import nltk
-from nltk.util import ngrams
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 from ontology_matching.src.matching_techniques import MatchingTechnique
 
@@ -35,21 +31,30 @@ class OntologyMatcher:
         texts = {}
         uris = set()
         for s, p, o in graph:
-            if o == rdflib.OWL.ObjectProperty:
-                if s not in texts:
-                    texts[s] = {"label": "", "comment": ""}
-                    uris.add(s)
-                texts[s]["label"] += " " + str(o)
-            elif p == RDFS.comment:
-                if s not in texts:
-                    texts[s] = {"label": "", "comment": ""}
-                    uris.add(s)
-                texts[s]["comment"] += " " + str(o)
-            elif o == rdflib.OWL.Class:
-                if s not in texts:
-                    texts[s] = {"label": "", "comment": ""}
-                    uris.add(s)
-                texts[s]["label"] += " " + str(s.split('#')[-1])  # Extract class name from URI
+            if type(s) != rdflib.term.BNode:
+                if o == rdflib.OWL.ObjectProperty:
+                    if s not in texts:
+                        texts[s] = {"label": "", "comment": ""}
+                        uris.add(s)
+                    label = str(s.replace("#", "/").split('/')[-1]) if "/" in s else s
+                    texts[s]["label"] = label
+                    if include_comments:
+                        try:
+                            comm = list(o2 for s2, p2, o2 in graph.triples((s, RDFS.comment, None)))[0]
+                            texts[s]["comment"] = str(comm)
+                        except:
+                            print(f"No comment for {s} {p} {o}")
+                elif o == rdflib.OWL.Class:
+                    if s not in texts:
+                        texts[s] = {"label": "", "comment": ""}
+                        uris.add(s)
+                    label = str(s.replace("#", "/").split('/')[-1]) if "/" in s else s
+                    texts[s]["label"] = label  # Extract class name from URI
+                    try:
+                        comm = list(o2 for s2, p2, o2 in graph.triples((s, RDFS.comment, None)))[0]
+                        texts[s]["comment"] = str(comm)
+                    except:
+                        print(f"No comment for {s} {p} {o}")
         if include_comments:
             info = {s: e["label"] + " " + e["comment"] for s, e in texts.items()}
         else:
