@@ -47,12 +47,12 @@ class MatcherAssessment:
             ent2 = list(o2 for s2, p2, o2 in alignment_graph.triples((s, ALIGN1.entity2, None)))[0]
             ent1 = list(o2 for s2, p2, o2 in alignment_graph.triples((s, ALIGN1.entity1, None)))[0]
             confidence = list(o2 for s2, p2, o2 in alignment_graph.triples((s, ALIGN1.measure, None)))[0]
-            matches["alignment"][ent1] = [ent2, confidence]
+            matches["alignment"][ent1.fragment] = [ent2.fragment, confidence.value]
         ALIGN2 = Namespace("http://knowledgeweb.semanticweb.org/heterogeneity/alignment")
         for s, p, o in expected_alignment_graph.triples((None, RDF.type, ALIGN2.Cell)):
             ent2 = list(o2 for s2, p2, o2 in expected_alignment_graph.triples((s, ALIGN2.entity2, None)))[0]
             ent1 = list(o2 for s2, p2, o2 in expected_alignment_graph.triples((s, ALIGN2.entity1, None)))[0]
             confidence = list(o2 for s2, p2, o2 in expected_alignment_graph.triples((s, ALIGN2.measure, None)))[0]
-            matches["expected_alignment"][ent1] = [ent2, confidence]
+            matches["expected_alignment"][ent1.fragment] = [ent2.fragment, confidence.value]
             print(f"Added {s}")
         return matches
