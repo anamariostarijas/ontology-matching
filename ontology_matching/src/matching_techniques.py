@@ -54,7 +54,9 @@ class MatchingTechnique:
         for left_uri, left_label in left_info.items():
             for right_uri, right_label in right_info.items():
                 similarity = Calculator.ngram_similarity(left_label, right_label, n)
-                if similarity >= threshold:
+                if left_uri not in matches and similarity >= threshold:
+                    matches[left_uri] = [right_uri, similarity]
+                if left_uri in matches and similarity >= matches[left_uri][1]:
                     matches[left_uri] = [right_uri, similarity]
         return matches
 
@@ -85,7 +87,9 @@ class MatchingTechnique:
         for i, uri1 in enumerate(left_info.keys()):
             for j, uri2 in enumerate(right_info.keys()):
                 confidence = similarity_matrix[i, j]
-                if confidence >= threshold:
+                if uri1 not in matches and confidence >= threshold:
+                    matches[uri1] = [uri2, confidence]
+                if uri1 in matches and confidence >= matches[uri1][1]:
                     matches[uri1] = [uri2, confidence]
         return matches
     
@@ -108,7 +112,9 @@ class MatchingTechnique:
         for left_uri, left_label in left_paths.items():
             for right_uri, right_label in right_paths.items():
                 similarity = 1 - Calculator.path_distance(left_label, right_label, l)
-                if similarity >= threshold:
+                if left_uri not in matches and similarity >= threshold:
+                    matches[left_uri] = [right_uri, similarity]
+                if left_uri in matches and similarity >= matches[left_uri][1]:
                     matches[left_uri] = [right_uri, similarity]
         return matches
         
