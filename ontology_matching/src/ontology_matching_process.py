@@ -105,7 +105,7 @@ class OntologyMatcher:
             ALIGN (Namespace): Namespace of the graph
             name (str): name of the graph
         """
-        correspondence = URIRef(f"http://example.org/{name}_alignment#{entity1.split('#')[-1]}_{entity2.split('#')[-1]}")
+        correspondence = URIRef(f"http://example.org/{name}#{entity1.split('#')[-1]}_{entity2.split('#')[-1]}")
         alignment_graph.add((correspondence, RDF.type, ALIGN.alignmentCell))
         alignment_graph.add((correspondence, ALIGN.entity1, URIRef(entity1)))
         alignment_graph.add((correspondence, ALIGN.entity2, URIRef(entity2)))
@@ -120,7 +120,8 @@ class OntologyMatcher:
             file_name (str): file path where to save the file
         """
         # Create alignment ontology
-        ALIGN = Namespace(f"http://example.org/{file_name}_alignment#")
+        ont_name = file_name.split(".rdf")[0]
+        ALIGN = Namespace(f"http://example.org/{ont_name}#")
         alignment_graph = Graph()
         alignment_graph.bind("align", ALIGN)
         alignment_graph.add((ALIGN.alignmentCell, RDF.type, OWL.Class))
@@ -132,10 +133,10 @@ class OntologyMatcher:
             entity1 = left_match
             entity2 = right_match[0]
             confidence = right_match[1]
-            self.add_correspondence(alignment_graph, entity1, entity2, confidence, ALIGN, file_name)
+            self.add_correspondence(alignment_graph, entity1, entity2, confidence, ALIGN, ont_name)
 
         # Serialize the alignment ontology
-        alignment_graph.serialize(f"{file_name}_alignment_ontology.rdf", format="xml")
+        alignment_graph.serialize(file_name, format="xml")
 
     
     
