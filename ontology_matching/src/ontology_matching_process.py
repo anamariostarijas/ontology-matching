@@ -44,6 +44,18 @@ class OntologyMatcher:
                             texts[s]["comment"] = str(comm)
                         except:
                             print(f"No comment for {s} {p} {o}")
+                elif o == rdflib.OWL.DatatypeProperty:
+                    if s not in texts:
+                        texts[s] = {"label": "", "comment": ""}
+                        uris.add(s)
+                    label = str(s.replace("#", "/").split('/')[-1]) if "/" in s else s
+                    texts[s]["label"] = label
+                    if include_comments:
+                        try:
+                            comm = list(o2 for s2, p2, o2 in graph.triples((s, RDFS.comment, None)))[0]
+                            texts[s]["comment"] = str(comm)
+                        except:
+                            print(f"No comment for {s} {p} {o}")
                 elif o == rdflib.OWL.Class:
                     if s not in texts:
                         texts[s] = {"label": "", "comment": ""}

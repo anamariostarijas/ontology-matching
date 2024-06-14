@@ -22,10 +22,13 @@ class Calculator:
         Returns:
             float: similarity score calculated
         """
+        min_len = min(len(str1), len(str2))
+        if min_len < n:
+            n = min_len
         ngrams1 = set(ngrams(str1, n))
         ngrams2 = set(ngrams(str2, n))
         intersection = ngrams1.intersection(ngrams2)
-        denom = min(len(str1), len(str2)) - n + 1
+        denom = min_len - n + 1
         return len(intersection) / denom
     
     @staticmethod
