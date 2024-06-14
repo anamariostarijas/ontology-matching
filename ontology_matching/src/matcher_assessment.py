@@ -72,15 +72,15 @@ class MatcherAssessment:
             # for ent1 find the match from generated alignment
             if ent1 in matches["alignment"] and matches["alignment"][ent1][0] == matches["expected_alignment"][ent1][0]:
                 # match was found and is correct
-                results["correct"][ent1] = match
+                results["correct"][ent1] = {"expected": match, "generated":  matches["alignment"][ent1]}
             elif ent1 in matches["alignment"] and matches["alignment"][ent1][0] != matches["expected_alignment"][ent1][0]:
                 # match was found and is not correct
-                results["incorrect"][ent1] = match
+                results["incorrect"][ent1] = {"expected": match, "generated":  matches["alignment"][ent1]}
             elif ent1 not in matches["alignment"]:
                 # match was not found
-                results["missing"][ent1] = match
+                results["missing"][ent1] = {"expected": match, "generated":  None}
         # matches made that shouldn't be there
         extras = set(matches["alignment"].keys()).difference(matches["expected_alignment"].keys())
         for extra in extras:
-            results["extras"][extra] = matches["alignment"][extra]
+            results["extras"][extra] = {"expected": None, "generated":  matches["alignment"][extra]}
         return results
