@@ -73,7 +73,7 @@ class OntologyMatcher:
             info = {s: e["label"] for s, e in texts.items()}
         return info
     
-    def match_ontologies(self, technique: str, threshold: float, include_comments: bool = False, l: float = 0.7) -> dict:
+    def match_ontologies(self, technique: str, threshold: float, include_comments: bool = False, l: float = 0.7, n: int = 3) -> dict:
         """Uses the technique specified and generates one-to-zero or one matches between entities from the ontologies, if the similarity score is greater than the threshold.
 
         Args:
@@ -94,7 +94,7 @@ class OntologyMatcher:
         if technique == "levenshtein":
             matches = MatchingTechnique.match_with_levenshtein(left_info, right_info, threshold*100)
         elif technique == "ngram":
-            matches = MatchingTechnique.match_with_n_gram(left_info, right_info, threshold)
+            matches = MatchingTechnique.match_with_n_gram(left_info, right_info, threshold, n)
         elif technique == "cosine":
             matches = MatchingTechnique.match_with_cosine(left_info, right_info, threshold)
         elif technique == "path":

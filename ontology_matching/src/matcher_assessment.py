@@ -49,13 +49,18 @@ class MatcherAssessment:
             ent2 = list(o2 for s2, p2, o2 in alignment_graph.triples((s, ALIGN1.entity2, None)))[0]
             ent1 = list(o2 for s2, p2, o2 in alignment_graph.triples((s, ALIGN1.entity1, None)))[0]
             confidence = list(o2 for s2, p2, o2 in alignment_graph.triples((s, ALIGN1.measure, None)))[0]
-            matches["alignment"][ent1.fragment] = [ent2.fragment, confidence.value/100]
+            # fragment will be found only if the id of the RefURI has # before fragment
+            ent1_fragment = ent1.fragment if ent1.fragment != "" else ent1.split("/")[-1]
+            ent2_fragment = ent2.fragment if ent2.fragment != "" else ent2.split("/")[-1]
+            matches["alignment"][ent1_fragment] = [ent2_fragment, confidence.value/100]
         ALIGN2 = Namespace("http://knowledgeweb.semanticweb.org/heterogeneity/alignment")
         for s, p, o in expected_alignment_graph.triples((None, RDF.type, ALIGN2.Cell)):
             ent2 = list(o2 for s2, p2, o2 in expected_alignment_graph.triples((s, ALIGN2.entity2, None)))[0]
             ent1 = list(o2 for s2, p2, o2 in expected_alignment_graph.triples((s, ALIGN2.entity1, None)))[0]
             confidence = list(o2 for s2, p2, o2 in expected_alignment_graph.triples((s, ALIGN2.measure, None)))[0]
-            matches["expected_alignment"][ent1.fragment] = [ent2.fragment, confidence.value]
+            ent1_fragment = ent1.fragment if ent1.fragment != "" else ent1.split("/")[-1]
+            ent2_fragment = ent2.fragment if ent2.fragment != "" else ent2.split("/")[-1]
+            matches["expected_alignment"][ent1_fragment] = [ent2_fragment, confidence.value]
         return matches
     
     def compare_alignments(self) -> dict:
