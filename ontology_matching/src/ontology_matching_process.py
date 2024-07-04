@@ -92,7 +92,7 @@ class OntologyMatcher:
         right_info = self.extract_labels(right_g, include_comments)
         # generate matches based on the technique
         if technique == "levenshtein":
-            matches = MatchingTechnique.match_with_levenshtein(left_info, right_info, threshold*100)
+            matches = MatchingTechnique.match_with_levenshtein(left_info, right_info, threshold)
         elif technique == "ngram":
             matches = MatchingTechnique.match_with_n_gram(left_info, right_info, threshold, n)
         elif technique == "cosine":

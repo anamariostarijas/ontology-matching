@@ -17,7 +17,7 @@ class MatchingTechnique:
         pass
     
     @staticmethod
-    def match_with_levenshtein(left_info: dict, right_info: dict, threshold: float = 90) -> dict:
+    def match_with_levenshtein(left_info: dict, right_info: dict, threshold: float = 0.8) -> dict:
         """Takes lists of labels of entities as an input and returns best match for each label from the left ontology, if the similarity is larger than threshold.
 
         Args:
@@ -31,6 +31,7 @@ class MatchingTechnique:
         matches = {}
         for left_uri, left_label in left_info.items():
             match, score = process.extractOne(left_label, list(right_info.values()), scorer=fuzz.token_sort_ratio)
+            score = score / 100
             if score >= threshold:
                 match_uri = [s for s,v in right_info.items() if v == match][0]
                 matches[left_uri] = [match_uri, score]
@@ -53,7 +54,7 @@ class MatchingTechnique:
         matches = {}
         for left_uri, left_label in left_info.items():
             for right_uri, right_label in right_info.items():
-                similarity = Calculator.ngram_similarity(left_label, right_label, n) * 100
+                similarity = Calculator.ngram_similarity(left_label, right_label, n)
                 if left_uri not in matches and similarity >= threshold:
                     matches[left_uri] = [right_uri, similarity]
                 if left_uri in matches and similarity >= matches[left_uri][1]:
@@ -61,7 +62,7 @@ class MatchingTechnique:
         return matches
 
     @staticmethod
-    def match_with_cosine(left_info: dict, right_info: dict, threshold: float = 0.9) -> dict:
+    def match_with_cosine(left_info: dict, right_info: dict, threshold: float = 0.8) -> dict:
         """Matches labels based on cosine similarity.
 
             left_info (dict): labels and uris of entities from the left ontology
@@ -86,7 +87,7 @@ class MatchingTechnique:
         matches = {}
         for i, uri1 in enumerate(left_info.keys()):
             for j, uri2 in enumerate(right_info.keys()):
-                confidence = similarity_matrix[i, j] * 100 
+                confidence = similarity_matrix[i, j]
                 if uri1 not in matches and confidence >= threshold:
                     matches[uri1] = [uri2, confidence]
                 if uri1 in matches and confidence >= matches[uri1][1]:
@@ -94,7 +95,7 @@ class MatchingTechnique:
         return matches
     
     @staticmethod
-    def match_with_path(left_graph: Graph, right_graph: Graph, threshold: float = 0.9, l: float = 0.7) -> dict:
+    def match_with_path(left_graph: Graph, right_graph: Graph, threshold: float = 0.8, l: float = 0.7) -> dict:
         """Matches labels based on the paths (class hierarchies).
 
         Args:
