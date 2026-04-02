@@ -25,7 +25,7 @@
   <owl:Ontology rdf:about="">
     <dc:creator>Nick Knouf &lt;nknouf@mit.edu&gt;</dc:creator>
     <dc:contributor>Antoine Zimmermann &lt;antoine.zimmermann@inrialpes.fr&gt;</dc:contributor>
-    <dc:contributor>Jrme Euzenat</dc:contributor>
+    <dc:contributor>Jérôme Euzenat</dc:contributor>
     <dc:description>Bibliographic references in OWL</dc:description>
     <dc:date>08/06/2005</dc:date>
     <rdfs:label>Bibliographic references</rdfs:label>
@@ -1349,16 +1349,16 @@
 </foaf:Person>
 
 <foaf:Person rdf:about="#a85228505">
-	<rdfs:label>Alexander Mï¿½dche</rdfs:label>
-	<foaf:name rdf:datatype="&xsd;string">Alexander Mï¿½dche</foaf:name>
+	<rdfs:label>Alexander Mädche</rdfs:label>
+	<foaf:name rdf:datatype="&xsd;string">Alexander Mädche</foaf:name>
 	<foaf:firstName rdf:datatype="&xsd;string">Alexander</foaf:firstName>
-	<lastName rdf:datatype="&xsd;string">Mï¿½dche</lastName>
+	<lastName rdf:datatype="&xsd;string">Mädche</lastName>
 </foaf:Person>
 
 <foaf:Person rdf:about="#a48552212">
-	<rdfs:label>Bjï¿½rn Schnizler</rdfs:label>
-	<foaf:name rdf:datatype="&xsd;string">Bjï¿½rn Schnizler</foaf:name>
-	<foaf:firstName rdf:datatype="&xsd;string">Bjï¿½rn</foaf:firstName>
+	<rdfs:label>Björn Schnizler</rdfs:label>
+	<foaf:name rdf:datatype="&xsd;string">Björn Schnizler</foaf:name>
+	<foaf:firstName rdf:datatype="&xsd;string">Björn</foaf:firstName>
 	<lastName rdf:datatype="&xsd;string">Schnizler</lastName>
 </foaf:Person>
 
@@ -1468,10 +1468,10 @@
 </foaf:Person>
 
 <foaf:Person rdf:about="#a98078619">
-	<rdfs:label>Philippe Cudrï¿½-Mauroux</rdfs:label>
-	<foaf:name rdf:datatype="&xsd;string">Philippe Cudrï¿½-Mauroux</foaf:name>
+	<rdfs:label>Philippe Cudré-Mauroux</rdfs:label>
+	<foaf:name rdf:datatype="&xsd;string">Philippe Cudré-Mauroux</foaf:name>
 	<foaf:firstName rdf:datatype="&xsd;string">Philippe</foaf:firstName>
-	<lastName rdf:datatype="&xsd;string">Cudrï¿½-Mauroux</lastName>
+	<lastName rdf:datatype="&xsd;string">Cudré-Mauroux</lastName>
 </foaf:Person>
 
 <foaf:Person rdf:about="#a39510672">
